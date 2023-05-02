@@ -48,7 +48,7 @@ body = function(manifest) {
     var questionId, stackScraper;
     this.stackScraper = stackScraper = new StackScraper;
     questionId = $('#question').data('questionid');
-    $('#question .post-menu').append('<span class="lsep">|</span>').append($('<a href="#" title="download a JSON copy of this post">json</a>').click(function() {
+    $('#question .js-post-menu').append('<span class="lsep">|</span>').append($('<a href="#" title="download a JSON copy of this post">json</a>').click(function() {
       var _this = this;
       $(this).addClass('ac_loading').text('?%');
       stackScraper.getQuestion(questionId).done(function(question) {
