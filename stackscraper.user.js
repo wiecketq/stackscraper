@@ -1,7 +1,6 @@
 // ==UserScript==
 // @name           StackScraper
-// @version        0.6.0
-// @namespace      http://extensions.github.com/stackscraper/
+// @version        0.7.0
 // @description    Adds download options to Stack Exchange questions.
 // @include        *://*.stackexchange.com/questions/*
 // @include        *://stackoverflow.com/questions/*
@@ -24,7 +23,7 @@ var body, e, manifest,
 
 manifest = {
   name: 'StackScraper',
-  version: '0.6.0',
+  version: '0.7.0',
   description: 'Adds download options to Stack Exchange questions.',
   homepage_url: 'http://stackapps.com/questions/3211/stackscraper-export-questions-as-json-or-html',
   permissions: ['*://*.stackexchange.com/*', '*://*.stackoverflow.com/*', '*://*.serverfault.com/*', '*://*.superuser.com/*', '*://*.askubuntu.com/*', '*://*.answers.onstartups.com/*', '*://*.stackapps.com/*'],
@@ -53,11 +52,19 @@ body = function(manifest) {
       var _this = this;
       $(this).addClass('ac_loading').text('?%');
       stackScraper.getQuestion(questionId).done(function(question) {
-        var bb;
-        bb = new BlobBuilder;
-        bb.append(JSON.stringify(question));
-        $(_this).removeClass('ac_loading').text('json');
-        return window.location = URL.createObjectURL(bb.getBlob()) + ("#/" + window.location.host + "-q-" + questionId + ".json");
+        var blob;
+        var strQuestion = JSON.stringify(question);
+        try{
+          blob = new Blob([strQuestion])
+        } catch(e) {
+          var bb;
+          bb = new BlobBuilder;
+          bb.append(strQuestion);
+          blob = bb.getBlob();
+        }
+          $(_this).removeClass('ac_loading').text('json');
+          return window.location = URL.createObjectURL(blob) + ("#/" + window.location.host + "-q-" + questionId + ".json");
+          
       }).progress(function(ratio) {
         return $(_this).text("" + ((ratio * 100) | 0) + "%");
       }).fail(function() {
